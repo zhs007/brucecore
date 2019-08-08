@@ -3,11 +3,8 @@ module github.com/zhs007/brucecore
 go 1.12
 
 require (
-	github.com/pkg/errors v0.8.1 // indirect
-	github.com/stretchr/testify v1.3.0 // indirect
+	github.com/zhs007/adacore v0.1.31
 	github.com/zhs007/jccclient v0.1.2
-	go.uber.org/atomic v1.4.0 // indirect
-	go.uber.org/multierr v1.1.0 // indirect
 	go.uber.org/zap v1.10.0
 	gopkg.in/yaml.v2 v2.2.2
 )

@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/zhs007/adacore"
+	adacorepb "github.com/zhs007/adacore/proto"
+	"github.com/zhs007/brucecore"
 	"github.com/zhs007/jccclient"
 	jarviscrawlercore "github.com/zhs007/jccclient/proto"
 )
@@ -27,7 +30,61 @@ func analyzePage(url string, delay int, w int, h int) (*jarviscrawlercore.ReplyA
 	return reply, nil
 }
 
+func genMarkdown(url string, reply *jarviscrawlercore.ReplyAnalyzePage) string {
+	km, err := adacore.LoadKeywordMappingList("./keywordmapping.yaml")
+	if err != nil {
+		fmt.Printf("load keywordmapping error %v", err)
+	}
+
+	md := adacore.NewMakrdown("Analyze Page Result")
+
+	md.AppendTable([]string{"Title", "Infomation"}, [][]string{
+		[]string{"URL", "[click here](http://47.90.46.159:8090/game.html?gameCode=nightclub&language=zh_CN&isCheat=true&slotKey=)"},
+		[]string{"Loading Time", brucecore.FormatTime(int(reply.PageTime) / 1000)},
+		[]string{"Resource Nums", fmt.Sprintf("%v", len(reply.Reqs))},
+		[]string{"Total Resource Size", brucecore.FormatByteSize(int(reply.PageBytes))},
+	})
+
+	md.AppendParagraph("This libraray is write by Zerro.\nThis is a multi-line text.")
+
+	str := md.GetMarkdownString(km)
+
+	// fmt.Print(str)
+
+	return str
+}
+
+func requestAda(url string, result *jarviscrawlercore.ReplyAnalyzePage) error {
+	client := adacore.NewClient("47.91.209.141:7201", "x7sSGGHgmKwUMoa5S4VZlr9bUF2lCCzF")
+
+	reply, err := client.BuildWithMarkdown(context.Background(), &adacorepb.MarkdownData{
+		StrData:      genMarkdown(url, result),
+		TemplateName: "default",
+	})
+	if err != nil {
+		fmt.Printf("startClient BuildWithMarkdownFile %v", err)
+
+		return err
+	}
+
+	if reply != nil {
+		// fmt.Print(reply.HashName)
+		fmt.Print(reply.Url)
+	}
+
+	return nil
+}
+
 func main() {
+	cfg, err := adacore.LoadConfig("./adacore.yaml")
+	if err != nil {
+		fmt.Printf("startServ LoadConfig %v", err)
+
+		return
+	}
+
+	adacore.InitLogger(cfg)
+
 	reply, err := analyzePage("http://47.90.46.159:8090/game.html?gameCode=nightclub&language=zh_CN&isCheat=true&slotKey=",
 		10, 1280, 800)
 	if err != nil {
@@ -35,6 +92,11 @@ func main() {
 	}
 
 	if reply != nil {
-		fmt.Printf("analyzePage ok!")
+		fmt.Printf("analyzePage ok!\n")
+
+		err = requestAda("http://47.90.46.159:8090/game.html?gameCode=nightclub&language=zh_CN&isCheat=true&slotKey=", reply)
+		if err != nil {
+			fmt.Printf("requestAda err %v", err)
+		}
 	}
 }
