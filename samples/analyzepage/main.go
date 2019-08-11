@@ -30,7 +30,11 @@ func analyzePage(url string, delay int, w int, h int) (*jarviscrawlercore.ReplyA
 	return reply, nil
 }
 
-func genMarkdown(url string, reply *jarviscrawlercore.ReplyAnalyzePage) string {
+func genMarkdown(url string, reply *jarviscrawlercore.ReplyAnalyzePage) *adacorepb.MarkdownData {
+	mddata := &adacorepb.MarkdownData{
+		TemplateName: "default",
+	}
+
 	km, err := adacore.LoadKeywordMappingList("./keywordmapping.yaml")
 	if err != nil {
 		fmt.Printf("load keywordmapping error %v", err)
@@ -47,20 +51,21 @@ func genMarkdown(url string, reply *jarviscrawlercore.ReplyAnalyzePage) string {
 
 	md.AppendParagraph("This libraray is write by Zerro.\nThis is a multi-line text.")
 
-	str := md.GetMarkdownString(km)
+	for i, v := range reply.Screenshots {
+		md.AppendImageBuf("Screenshot", fmt.Sprintf("screenshot%v", i), v.Buf, mddata)
+	}
+
+	mddata.StrData = md.GetMarkdownString(km)
 
 	// fmt.Print(str)
 
-	return str
+	return mddata
 }
 
 func requestAda(url string, result *jarviscrawlercore.ReplyAnalyzePage) error {
 	client := adacore.NewClient("47.91.209.141:7201", "x7sSGGHgmKwUMoa5S4VZlr9bUF2lCCzF")
 
-	reply, err := client.BuildWithMarkdown(context.Background(), &adacorepb.MarkdownData{
-		StrData:      genMarkdown(url, result),
-		TemplateName: "default",
-	})
+	reply, err := client.BuildWithMarkdown(context.Background(), genMarkdown(url, result))
 	if err != nil {
 		fmt.Printf("startClient BuildWithMarkdownFile %v", err)
 
