@@ -18,6 +18,9 @@ clienttokens:
 # filepath - Output file path
 filepath: ./
 
+# templatespath - templates file path
+templatespath: ../../markdowntemp/
+
 # bindaddr - bind addr
 bindaddr: 0.0.0.0:7201
 

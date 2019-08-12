@@ -2,6 +2,9 @@ package brucecore
 
 import (
 	"fmt"
+	"strings"
+
+	"net/url"
 )
 
 // FormatTime - 12345 => 1.235s
@@ -40,4 +43,18 @@ func FormatByteSize(bytesize int) string {
 	}
 
 	return fmt.Sprintf("%v B", bytesize)
+}
+
+// GetSource - https://www.a.com/b/c.png => https://www.a.com
+func GetSource(str string) (string, error) {
+	if strings.Index(str, "local:imgdata-") == 0 {
+		return "local:imgdata", nil
+	}
+
+	u, err := url.Parse(str)
+	if err != nil {
+		return "", err
+	}
+
+	return u.Scheme + "://" + u.Host, nil
 }
