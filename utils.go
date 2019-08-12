@@ -4,64 +4,40 @@ import (
 	"fmt"
 )
 
-// FormatTime - 100 => 1m40s
+// FormatTime - 12345 => 1.235s
 func FormatTime(time int) string {
-	if time > 24*60*60 {
-		d := time / (24 * 60 * 60)
-		time -= d * (24 * 60 * 60)
-		h := time / (60 * 60)
-		time -= h * (60 * 60)
-		m := time / 60
-		time -= m * 60
-		s := time
+	if time > 24*60*60*1000 {
+		d := float64(time) / (24 * 60 * 60 * 1000)
 
-		return fmt.Sprintf("%vd%vh%vm%vs", d, h, m, s)
-	} else if time > 60*60 {
-		h := time / (60 * 60)
-		time -= h * (60 * 60)
-		m := time / 60
-		time -= m * 60
-		s := time
+		return fmt.Sprintf("%.3f D", d)
+	} else if time > 60*60*1000 {
+		h := float64(time) / (60 * 60)
 
-		return fmt.Sprintf("%vh%vm%vs", h, m, s)
-	} else if time > 60 {
-		m := time / 60
-		time -= m * 60
-		s := time
+		return fmt.Sprintf("%.3f H", h)
+	} else if time > 60*1000 {
+		m := float64(time) / 60
 
-		return fmt.Sprintf("%vm%vs", m, s)
+		return fmt.Sprintf("%.3f m", m)
 	}
 
-	return fmt.Sprintf("%vs", time)
+	return fmt.Sprintf("%.3f s", float64(time)/1000)
 }
 
 // FormatByteSize - 1025 => 1k1b
 func FormatByteSize(bytesize int) string {
 	if bytesize > 1024*1024*1024 {
-		g := bytesize / (1024 * 1024 * 1024)
-		bytesize -= g * (bytesize)
-		m := bytesize / (1024 * 1024)
-		bytesize -= m * (1024 * 1024)
-		k := bytesize / 1024
-		bytesize -= k * 1024
-		b := bytesize
+		g := float64(bytesize) / (1024 * 1024 * 1024)
 
-		return fmt.Sprintf("%vg%vm%vk%vb", g, m, k, b)
+		return fmt.Sprintf("%.3f G", g)
 	} else if bytesize > 1024*1024 {
-		m := bytesize / (1024 * 1024)
-		bytesize -= m * (1024 * 1024)
-		k := bytesize / 1024
-		bytesize -= k * 1024
-		b := bytesize
+		m := float64(bytesize) / (1024 * 1024)
 
-		return fmt.Sprintf("%vm%vk%vb", m, k, b)
+		return fmt.Sprintf("%.3f M", m)
 	} else if bytesize > 1024 {
-		k := bytesize / 1024
-		bytesize -= k * 1024
-		b := bytesize
+		k := float64(bytesize) / 1024
 
-		return fmt.Sprintf("%vk%vb", k, b)
+		return fmt.Sprintf("%.3f K", k)
 	}
 
-	return fmt.Sprintf("%vb", bytesize)
+	return fmt.Sprintf("%v B", bytesize)
 }
