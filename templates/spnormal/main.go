@@ -83,7 +83,12 @@ func GenMarkdown(name string, url string, reply *jarviscrawlercore.ReplyAnalyzeP
 	}
 
 	for i, v := range reply.Screenshots {
-		md.AppendImageBuf("截图", fmt.Sprintf("screenshot%v", i), v.Buf, mddata)
+		imgname := fmt.Sprintf("screenshot%v.jpg", i)
+		if v.Type == jarviscrawlercore.AnalyzeScreenshotType_AST_PNG {
+			imgname = fmt.Sprintf("screenshot%v.png", i)
+		}
+
+		md.AppendImageBuf("截图", imgname, v.Buf, mddata)
 	}
 
 	mddata.StrData = md.GetMarkdownString(km)
