@@ -17,10 +17,12 @@ type SourceList struct {
 
 // ResSourceData - resource source data
 type ResSourceData struct {
-	ResSource []string `yaml:"source"`
-	Bytes     []int    `yaml:"bytes"`
-	Time      []int    `yaml:"time"`
-	Nums      []int    `yaml:"nums"`
+	ResSource     []string  `yaml:"source"`
+	Bytes         []int     `yaml:"bytes"`
+	MBytes        []float32 `yaml:"mbytes"`
+	Time          []int     `yaml:"time"`
+	Nums          []int     `yaml:"nums"`
+	DownloadSpeed []float32 `yaml:"downloadspeed"`
 }
 
 // Insert - insert a SourceInfo
@@ -60,8 +62,13 @@ func (sl *SourceList) ToData() *ResSourceData {
 	for _, v := range sl.List {
 		rsd.ResSource = append(rsd.ResSource, v.Source)
 		rsd.Bytes = append(rsd.Bytes, v.TotalBytes)
+		rsd.MBytes = append(rsd.MBytes, float32(v.TotalBytes)/1024/1024)
 		rsd.Time = append(rsd.Time, v.TotalTime)
 		rsd.Nums = append(rsd.Nums, v.TotalNums)
+
+		ds := float32(v.TotalBytes) * 1000 / float32(v.TotalTime) / 1024 / 1024
+
+		rsd.DownloadSpeed = append(rsd.DownloadSpeed, ds)
 	}
 
 	return rsd
