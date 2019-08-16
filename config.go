@@ -22,6 +22,20 @@ type Config struct {
 	AdaCoreToken string
 
 	//------------------------------------------------------------------
+	// jarviscrawler configuration
+
+	// JarvisCrawlerServAddr - Jarvis Crawler service address
+	JarvisCrawlerServAddr string
+	// JarvisCrawlerToken - This is a valid jarviscrawler token
+	JarvisCrawlerToken string
+
+	//------------------------------------------------------------------
+	// brucenode service configuration
+
+	// ClientTokens - There are the valid clienttokens for this node
+	ClientTokens []string
+
+	//------------------------------------------------------------------
 	// logger configuration
 
 	Log struct {

@@ -1,0 +1,36 @@
+# Bruce Node Configuration
+
+#----------------------------------------------------------------
+# adacore configuration
+
+# adacoreservaddr - Ada core service address
+adacoreservaddr: 127.0.0.1:7201
+# adacoretoken - This is a valid adacoreserv token
+adacoretoken: abcdefgh
+
+#----------------------------------------------------------------
+# jarviscrawler configuration
+
+# jarviscrawlerservaddr - Ada core service address
+jarviscrawlerservaddr: 127.0.0.1:7051
+# jarviscrawlertoken - This is a valid adacoreserv token
+jarviscrawlertoken: abcdefgh
+
+#----------------------------------------------------------------
+# brucenode service configuration
+
+# clienttokens - There are the valid clienttokens for this node
+clienttokens:
+  - abcdefgh
+
+# bindaddr - bind addr
+bindaddr: 0.0.0.0:7203
+
+# log - log config
+log:
+  # logpath - log path
+  logpath: './logs'
+  # loglevel - log level, it can be debug, info, warn, error
+  loglevel: 'debug'
+  # logconsole - it can be output to console
+  logconsole: true

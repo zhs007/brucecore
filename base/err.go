@@ -7,4 +7,7 @@ var (
 	ErrConfigNoAdaCoreServAddr = errors.New("There is no AdaCoreServAddr in the configuration file")
 	// ErrConfigNoAdaCoreToken - There is no AdaCoreToken in the configuration file
 	ErrConfigNoAdaCoreToken = errors.New("There is no AdaCoreToken in the configuration file")
+
+	// ErrNoTemplate - no template
+	ErrNoTemplate = errors.New("no template")
 )
