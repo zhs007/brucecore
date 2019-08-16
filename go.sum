@@ -34,8 +34,8 @@ github.com/stretchr/testify v1.3.0 h1:TivCn/peBQ7UY8ooIcPgZFpTNSz0Q2U6UrFlUfqbe0
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/syndtr/goleveldb v0.0.0-20190203031304-2f17a3356c66/go.mod h1:ZVVdQEZoIme9iO1Ch2Jdy24qqXrMMOU6lpPAyBWyWuQ=
 github.com/syndtr/goleveldb v1.0.0/go.mod h1:ZVVdQEZoIme9iO1Ch2Jdy24qqXrMMOU6lpPAyBWyWuQ=
-github.com/zhs007/adacore v0.1.46 h1:jmzpe1sNaQqAaDCpyihiqgBR2GT2+qpQLu2j0ms0VwI=
-github.com/zhs007/adacore v0.1.46/go.mod h1:6bITOZEC5OdPAXQ9VpNwDi8afCucqL+Bch1c+nFexLM=
+github.com/zhs007/adacore v0.1.48 h1:V8+Fo+oJSjhT6SANA/moh2NJfx/z5eyN+vNZOtN9T7k=
+github.com/zhs007/adacore v0.1.48/go.mod h1:6bITOZEC5OdPAXQ9VpNwDi8afCucqL+Bch1c+nFexLM=
 github.com/zhs007/ankadb v0.3.31/go.mod h1:IsfaA6sTij3tK+2knD9UMdMfN1xGOmwjRJOsEfg7NKk=
 github.com/zhs007/jccclient v0.1.5 h1:7UZQpPgFxg/mieFadAPszkYg0HevsclQM2d0j0mPvjQ=
 github.com/zhs007/jccclient v0.1.5/go.mod h1:K42ksNZncHbKgc352EPqPxX3uRR1MbfpKJuJTydcEss=

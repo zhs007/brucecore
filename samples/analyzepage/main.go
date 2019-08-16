@@ -117,7 +117,7 @@ func main() {
 	url := "https://www.douban.com"
 	name := "豆瓣"
 
-	adacore.InitTemplates(cfg.TemplatesPath)
+	adacore.InitTemplates()
 	adacore.InitLogger(cfg)
 
 	reply, err := analyzePage(url, 10, 1280, 800)
