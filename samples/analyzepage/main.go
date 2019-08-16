@@ -15,7 +15,19 @@ func analyzePage(url string, delay int, w int, h int) (*jarviscrawlercore.ReplyA
 	client := jccclient.NewClient("47.75.11.61:7051", "wzDkh9h2fhfUVuS9jZ8uVbhV3vC5AWX3")
 
 	reply, err := client.AnalyzePage(context.Background(),
-		url, delay, w, h, 1.0, false, false)
+		url, &jccclient.Viewport{
+			Width:             w,
+			Height:            h,
+			DeviceScaleFactor: 1.0,
+			IsMobile:          false,
+			IsLandscape:       false,
+		},
+		&jccclient.AnalyzePageOptions{
+			NeedScreenshots:  true,
+			NeedLogs:         true,
+			Timeout:          0,
+			ScreenshotsDelay: delay,
+		})
 
 	if err != nil {
 		// fmt.Printf("AnalyzePage %v", err)
@@ -102,33 +114,13 @@ func main() {
 		return
 	}
 
-	// url := "https://h5c.cqgame.games/160/?&language=en&token=guest"
-	// name := "发财神"
-
-	// url := "https://m.pg-demo.com/tiki-go/index.html?language=en&bet_type=2&real_url=https%3A%2F%2Fwww.pgsoft.com%2Fen%2Fpartners%2F&from=https%3A%2F%2Fpublic.pg-redirect.us%2Fpages%2Fclose.html"
-	// name := "tiki go"
-
-	// url := "https://m.pg-redirect.us/medusa2/index.html?language=en&bet_type=2&real_url=https%3A%2F%2Fwww.pgsoft.com%2Fen%2Fpartners%2F&from=https%3A%2F%2Fpublic.pg-redirect.us%2Fpages%2Fclose.html"
-	// name := "PG美杜莎2"
-
-	// url := "http://47.90.46.159:8090/game.html?gameCode=atlantis&language=zh_CN&isCheat=true&slotKey="
-	// name := "阿特兰蒂斯"
-
-	url := "https://m.pg-demo.com/fortune-gods/index.html?language=en&bet_type=2&real_url=https%3A%2F%2Fwww.pgsoft.com%2Fen%2Fpartners%2F&from=https%3A%2F%2Fpublic.pg-redirect.us%2Fpages%2Fclose.html"
-	name := "PG财神"
-
-	// url := "https://demo.dreamtechgaming.net/game.html?gameCode=dragonball&language=en_US&isCheat=true"
-	// name := "DT龙珠欧洲"
-
-	// url := "http://47.90.46.159:8090/game.html?gameCode=dragonball&language=zh_CN&isCheat=true&slotKey="
-	// name := "DT龙珠"
+	url := "https://www.douban.com"
+	name := "豆瓣"
 
 	adacore.InitTemplates(cfg.TemplatesPath)
 	adacore.InitLogger(cfg)
 
 	reply, err := analyzePage(url, 10, 1280, 800)
-	// reply, err := analyzePage("http://47.90.46.159:8090/game.html?gameCode=nightclub&language=zh_CN&isCheat=true&slotKey=",
-	// 	10, 1280, 800)
 	if err != nil {
 		fmt.Printf("analyzePage err %v", err)
 	}

@@ -136,15 +136,8 @@ func AnalyzeResType(reqs []*jarviscrawlercore.AnalyzeReqInfo) (*ResTypeMgr, erro
 	mgr := &ResTypeMgr{}
 
 	for _, v := range reqs {
-		cct := strings.Split(v.ContentType, ";")
-		cft := strings.Split(cct[0], "/")
-		if cft[1] == "jpg" || cft[1] == "jpeg" {
-			cft[1] = "jpg"
-		} else if cft[1] == "javascript" {
-			cft[1] = "js"
-		}
-
-		mgr.Insert(cft[1], int(v.BufBytes), int(v.DownloadTime))
+		rt := GetResType(v.ContentType)
+		mgr.Insert(rt, int(v.BufBytes), int(v.DownloadTime))
 
 		if v.ImgWidth > 0 && v.ImgHeight > 0 {
 			mgr.InsertImage(int(v.ImgWidth), int(v.ImgHeight), int(v.BufBytes), int(v.DownloadTime))
@@ -152,4 +145,21 @@ func AnalyzeResType(reqs []*jarviscrawlercore.AnalyzeReqInfo) (*ResTypeMgr, erro
 	}
 
 	return mgr, nil
+}
+
+// GetResType - get resource type
+func GetResType(contentType string) string {
+	cct := strings.Split(contentType, ";")
+	cft := strings.Split(cct[0], "/")
+	if len(cft) > 1 {
+		if cft[1] == "jpg" || cft[1] == "jpeg" {
+			cft[1] = "jpg"
+		} else if cft[1] == "javascript" {
+			cft[1] = "js"
+		}
+
+		return cft[1]
+	}
+
+	return cft[0]
 }
