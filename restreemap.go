@@ -148,9 +148,10 @@ func (ris *reqInSource) find(rtype string) *reqInType {
 // buildResType - build resource type
 func (ris *reqInSource) buildResType() {
 	for _, v := range ris.lst {
-		rt := GetResType(v.ContentType)
-
-		ris.insert(rt, v)
+		rt, err := GetResType(v)
+		if err == nil {
+			ris.insert(rt, v)
+		}
 	}
 
 	for _, v := range ris.lstType {
@@ -238,7 +239,7 @@ func AnalyzeResTreeMap(reqs []*jarviscrawlercore.AnalyzeReqInfo) (*ResTreeMapDat
 	data := &ResTreeMapData{}
 
 	for _, v := range reqs {
-		cs, err := GetSource(v.Url)
+		cs, err := GetHostname(v.Url)
 		if err != nil {
 			return nil, err
 		}

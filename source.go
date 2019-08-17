@@ -79,7 +79,7 @@ func AnalyzeResSource(reqs []*jarviscrawlercore.AnalyzeReqInfo) (*SourceList, er
 	sl := &SourceList{}
 
 	for _, v := range reqs {
-		cs, err := GetSource(v.Url)
+		cs, err := GetHostname(v.Url)
 		if err != nil {
 			return nil, err
 		}

@@ -33,6 +33,21 @@ func GenMarkdown(name string, url string, reply *jarviscrawlercore.ReplyAnalyzeP
 		return nil, err
 	}
 
+	httpcheme, err := brucecore.GetResWithScheme(reply.Reqs, "http")
+	if err != nil {
+		return nil, err
+	}
+
+	nogzip, err := brucecore.GetNoGZip(reply.Reqs)
+	if err != nil {
+		return nil, err
+	}
+
+	hostname, err := brucecore.AnalyzeHostNameInfo(reply.Reqs)
+	if err != nil {
+		return nil, err
+	}
+
 	md := adacore.NewMakrdown(fmt.Sprintf("单页分析结果 - %v", name))
 
 	md.AppendTable([]string{"常规项目", "结果"}, [][]string{
@@ -45,11 +60,25 @@ func GenMarkdown(name string, url string, reply *jarviscrawlercore.ReplyAnalyzeP
 		[]string{"日志数量", fmt.Sprintf("%v", len(reply.Logs))},
 	})
 
+	md.AppendParagraph("")
+
+	md.AppendTable([]string{"hostname", "IP"}, hostname.ToData())
+
 	md.AppendParagraph("### 日志")
 	md.AppendCode("", strings.Join(reply.Logs, "\n"))
 
 	md.AppendParagraph("### 错误输出")
 	md.AppendCode("", strings.Join(reply.Errs, "\n"))
+
+	if len(httpcheme) > 0 {
+		md.AppendParagraph("### http协议")
+		md.AppendCode("", strings.Join(httpcheme, "\n"))
+	}
+
+	if len(nogzip) > 0 {
+		md.AppendParagraph("### 未GZip")
+		md.AppendCode("", strings.Join(nogzip, "\n"))
+	}
 
 	_, err = md.AppendDataset("reshostds", sl.ToData())
 	if err != nil {

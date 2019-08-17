@@ -2,7 +2,6 @@ package brucecore
 
 import (
 	"fmt"
-	"strings"
 
 	jarviscrawlercore "github.com/zhs007/jccclient/proto"
 )
@@ -136,7 +135,11 @@ func AnalyzeResType(reqs []*jarviscrawlercore.AnalyzeReqInfo) (*ResTypeMgr, erro
 	mgr := &ResTypeMgr{}
 
 	for _, v := range reqs {
-		rt := GetResType(v.ContentType)
+		rt, err := GetResType(v)
+		if err != nil {
+			return nil, err
+		}
+
 		mgr.Insert(rt, int(v.BufBytes), int(v.DownloadTime))
 
 		if v.ImgWidth > 0 && v.ImgHeight > 0 {
@@ -147,19 +150,19 @@ func AnalyzeResType(reqs []*jarviscrawlercore.AnalyzeReqInfo) (*ResTypeMgr, erro
 	return mgr, nil
 }
 
-// GetResType - get resource type
-func GetResType(contentType string) string {
-	cct := strings.Split(contentType, ";")
-	cft := strings.Split(cct[0], "/")
-	if len(cft) > 1 {
-		if cft[1] == "jpg" || cft[1] == "jpeg" {
-			cft[1] = "jpg"
-		} else if cft[1] == "javascript" {
-			cft[1] = "js"
-		}
+// // GetResType - get resource type
+// func GetResType(contentType string) string {
+// 	cct := strings.Split(contentType, ";")
+// 	cft := strings.Split(cct[0], "/")
+// 	if len(cft) > 1 {
+// 		if cft[1] == "jpg" || cft[1] == "jpeg" {
+// 			cft[1] = "jpg"
+// 		} else if cft[1] == "javascript" {
+// 			cft[1] = "js"
+// 		}
 
-		return cft[1]
-	}
+// 		return cft[1]
+// 	}
 
-	return cft[0]
-}
+// 	return cft[0]
+// }

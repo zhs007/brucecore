@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	"net/url"
+
+	jarviscrawlercore "github.com/zhs007/jccclient/proto"
 )
 
 // FormatTime - 12345 => 1.235s
@@ -45,10 +47,10 @@ func FormatByteSize(bytesize int) string {
 	return fmt.Sprintf("%v B", bytesize)
 }
 
-// GetSource - https://www.a.com/b/c.png => https://www.a.com
-func GetSource(str string) (string, error) {
-	if strings.Index(str, "local:imgdata-") == 0 {
-		return "local:imgdata", nil
+// GetHostname - https://www.a.com/b/c.png => www.a.com
+func GetHostname(str string) (string, error) {
+	if strings.Index(str, "local:") == 0 {
+		return "local", nil
 	}
 
 	u, err := url.Parse(str)
@@ -56,5 +58,59 @@ func GetSource(str string) (string, error) {
 		return "", err
 	}
 
-	return u.Scheme + "://" + u.Host, nil
+	return u.Host, nil
+}
+
+// GetScheme - https://www.a.com/b/c.png => https
+func GetScheme(str string) (string, error) {
+	if strings.Index(str, "local:") == 0 {
+		return "", nil
+	}
+
+	u, err := url.Parse(str)
+	if err != nil {
+		return "", err
+	}
+
+	return u.Scheme, nil
+}
+
+// GetResType - https://www.a.com/b/c.png => https
+func GetResType(res *jarviscrawlercore.AnalyzeReqInfo) (string, error) {
+	if strings.Index(res.Url, "local:") == 0 {
+		return "", nil
+	}
+
+	u, err := url.Parse(strings.ToLower(res.Url))
+	if err != nil {
+		return "", err
+	}
+
+	arr := strings.Split(u.Path, ".")
+	if len(arr) > 1 {
+		exname := arr[len(arr)-1]
+
+		if exname == "mp3" || exname == "png" || exname == "gif" ||
+			exname == "webp" || exname == "js" || exname == "css" ||
+			exname == "mp4" {
+
+			return exname, nil
+		} else if exname == "jpg" || exname == "jpeg" {
+			return "jpg", nil
+		}
+	}
+
+	cct := strings.Split(res.ContentType, ";")
+	cft := strings.Split(cct[0], "/")
+	if len(cft) > 1 {
+		if cft[1] == "jpg" || cft[1] == "jpeg" {
+			cft[1] = "jpg"
+		} else if cft[1] == "javascript" {
+			cft[1] = "js"
+		}
+
+		return cft[1], nil
+	}
+
+	return cft[0], nil
 }
