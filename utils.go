@@ -2,9 +2,8 @@ package brucecore
 
 import (
 	"fmt"
-	"strings"
-
 	"net/url"
+	"strings"
 
 	jarviscrawlercore "github.com/zhs007/jccclient/proto"
 )
@@ -49,8 +48,8 @@ func FormatByteSize(bytesize int) string {
 
 // GetHostname - https://www.a.com/b/c.png => www.a.com
 func GetHostname(str string) (string, error) {
-	if strings.Index(str, "local:") == 0 {
-		return "local", nil
+	if strings.Index(str, "http") != 0 {
+		return "", nil
 	}
 
 	u, err := url.Parse(str)

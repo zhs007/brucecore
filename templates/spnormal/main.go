@@ -77,7 +77,10 @@ func GenMarkdown(name string, url string, reply *jarviscrawlercore.ReplyAnalyzeP
 
 	if len(nogzip) > 0 {
 		md.AppendParagraph("### 未GZip")
-		md.AppendCode("", strings.Join(nogzip, "\n"))
+
+		md.AppendTable([]string{"URL", "原文件大小", "压缩后大小", "降低比例"},
+			brucecore.BuildNoGZipTableData(nogzip))
+		// md.AppendCode("", strings.Join(nogzip, "\n"))
 	}
 
 	_, err = md.AppendDataset("reshostds", sl.ToData())
