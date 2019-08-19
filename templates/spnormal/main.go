@@ -48,6 +48,11 @@ func GenMarkdown(name string, url string, reply *jarviscrawlercore.ReplyAnalyzeP
 		return nil, err
 	}
 
+	imgmgr, err := brucecore.AnalyzeImageMgr(reply.Reqs)
+	if err != nil {
+		return nil, err
+	}
+
 	md := adacore.NewMakrdown(fmt.Sprintf("单页分析结果 - %v", name))
 
 	md.AppendTable([]string{"常规项目", "结果"}, [][]string{
@@ -62,6 +67,10 @@ func GenMarkdown(name string, url string, reply *jarviscrawlercore.ReplyAnalyzeP
 
 	md.AppendParagraph("")
 
+	md.AppendParagraph("### 机房地理位置分析")
+	md.AppendParagraph("> 这里记录了下载资源实际的IP地址以及地理位置。\n如果某个资源下载速度较慢，有可能是因为距离机房太远造成的。可以考虑使用CDN来优化。")
+	md.AppendParagraph("> 注意：有些CDN服务是单IP的，譬如google的CDN，所以不能以不同区域访问到同一个机房，来推断是否使用了CDN服务。")
+
 	md.AppendTable([]string{"hostname", "IP"}, hostname.ToData())
 
 	md.AppendParagraph("### 日志")
@@ -72,16 +81,22 @@ func GenMarkdown(name string, url string, reply *jarviscrawlercore.ReplyAnalyzeP
 
 	if len(httpcheme) > 0 {
 		md.AppendParagraph("### http协议")
+		md.AppendParagraph("> 这里是本页面中使用到的http请求，建议使用https请求。")
 		md.AppendCode("", strings.Join(httpcheme, "\n"))
 	}
 
 	if len(nogzip) > 0 {
-		md.AppendParagraph("### 未GZip")
+		md.AppendParagraph("### GZip优化")
+		md.AppendParagraph("> 这里是本页面中还没有进行gzip压缩的静态资源。\n我们已经剔除了动态请求、小于1K的文件、压缩格式的文件。")
 
 		md.AppendTable([]string{"URL", "原文件大小", "压缩后大小", "降低比例"},
 			brucecore.BuildNoGZipTableData(nogzip))
 		// md.AppendCode("", strings.Join(nogzip, "\n"))
 	}
+
+	md.AppendParagraph("### 资源站速度及资源量比较")
+	md.AppendParagraph("> 这里的速度是不考虑gzip压缩后的大小，所以如果某个资源站几乎全部是下载js或css文件，而这些文件又开启了gzip压缩的话，它的速度会明显快于其它站点。")
+	md.AppendParagraph("> 这里的速度没有考虑浏览器的多线程下载，而是简单的按单个请求发起时间到下载完成时间累积。")
 
 	_, err = md.AppendDataset("reshostds", sl.ToData())
 	if err != nil {
@@ -159,6 +174,10 @@ func GenMarkdown(name string, url string, reply *jarviscrawlercore.ReplyAnalyzeP
 	// if err != nil {
 	// 	return nil, err
 	// }
+
+	md.AppendParagraph("### 资源类型速度及资源量比较")
+	md.AppendParagraph("> 这里的速度是不考虑gzip压缩后的大小，所以如果某个类型gzip压缩率很高，又开启了gzip压缩的话，它的速度会明显快于其它资源。")
+	md.AppendParagraph("> 这里的速度没有考虑浏览器的多线程下载，而是简单的按单个请求发起时间到下载完成时间累积。")
 
 	_, err = md.AppendDataset("rtds", rt.ToData())
 	if err != nil {
@@ -282,18 +301,45 @@ func GenMarkdown(name string, url string, reply *jarviscrawlercore.ReplyAnalyzeP
 	// 	return nil, err
 	// }
 
+	md.AppendParagraph("### 资源大小分布")
+	md.AppendParagraph("> 这里可以查看不同资源站的不用种类资源容量占比。")
+
 	_, err = md.AppendChartTreeMap(&adacore.ChartTreeMap{
 		ID:         "restreemap",
 		Title:      "资源大小分布",
 		SubText:    "",
-		Width:      800,
-		Height:     600,
+		Width:      1280,
+		Height:     800,
 		LegendData: restreemap.HostList,
 		TreeMap:    restreemap.TreeMap,
 	})
 	if err != nil {
 		return nil, err
 	}
+
+	md.AppendParagraph("")
+	md.AppendParagraph("")
+	md.AppendParagraph("")
+
+	md.AppendParagraph("### 图片像素质量占比")
+	md.AppendParagraph("> 图片像素质量 = 图片字节大小 / (图片宽度 * 图片高度) 。\n我们根据图片像素质量来粗略的评估图片压缩率，那么质量占比大的图片，理应被优先压缩。")
+
+	_, err = md.AppendChartTreeMapFloat(&adacore.ChartTreeMapFloat{
+		ID:         "pstreemap",
+		Title:      "像素质量占比",
+		SubText:    "",
+		Width:      1280,
+		Height:     800,
+		LegendData: imgmgr.HostList,
+		TreeMap:    imgmgr.TreeMap,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	md.AppendParagraph("")
+	md.AppendParagraph("")
+	md.AppendParagraph("")
 
 	// fmt.Printf("%v", str1)
 
