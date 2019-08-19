@@ -15,11 +15,11 @@ func FormatTime(time int) string {
 
 		return fmt.Sprintf("%.3f D", d)
 	} else if time > 60*60*1000 {
-		h := float64(time) / (60 * 60)
+		h := float64(time) / (60 * 60 * 1000)
 
 		return fmt.Sprintf("%.3f H", h)
 	} else if time > 60*1000 {
-		m := float64(time) / 60
+		m := float64(time) / (60 * 1000)
 
 		return fmt.Sprintf("%.3f m", m)
 	}
