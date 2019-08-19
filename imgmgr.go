@@ -68,7 +68,9 @@ func (mgr *ImageMgr) Find(url string) *Image {
 func (mgr *ImageMgr) buildTreeMapData() {
 	mgr.HostList = []string{"images"}
 	mgr.TreeMap = []adacore.ChartTreeMapSeriesNodeFloat{
-		adacore.ChartTreeMapSeriesNodeFloat{},
+		adacore.ChartTreeMapSeriesNodeFloat{
+			Name: "images",
+		},
 	}
 
 	for _, v := range mgr.Imgs {
