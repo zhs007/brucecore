@@ -1,0 +1,15 @@
+syntax = "proto3";
+package ipgeopb;
+
+// IPGeo - ip geolocation
+message IPGeo {
+    float latitude = 1;
+    float longitude = 2;
+    string organization = 3;
+    string asn = 4;
+    string continent = 5;
+    string country = 6;
+    string region = 7;
+    string city = 8;
+    string hostname = 9;
+}
