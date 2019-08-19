@@ -28,6 +28,7 @@ func (rit *reqImgType) buildData(data *adacore.ChartTreeMapData) {
 		curd := adacore.ChartTreeMapData{
 			Name:  GetURLName(v.Url),
 			Value: int(v.BufBytes),
+			URL:   v.Url,
 		}
 
 		data.Children = append(data.Children, curd)
@@ -105,6 +106,7 @@ func (rit *reqInType) buildData(data *adacore.ChartTreeMapData) {
 		curd := adacore.ChartTreeMapData{
 			Name:  GetURLName(v.Url),
 			Value: int(v.BufBytes),
+			URL:   v.Url,
 		}
 
 		data.Children = append(data.Children, curd)

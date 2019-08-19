@@ -133,6 +133,7 @@ func (mgr *ImageMgr) insertImage2TreeMap(img *Image) {
 						adacore.ChartTreeMapDataFloat{
 							Name:  GetURLName(img.URL),
 							Value: img.PixelQuality,
+							URL:   img.URL,
 						})
 
 					return
@@ -148,7 +149,7 @@ func AnalyzeImageMgr(reqs []*jarviscrawlercore.AnalyzeReqInfo) (*ImageMgr, error
 
 	for _, v := range reqs {
 		rt, err := GetResType(v)
-		if err == nil && rt != "" && v.ImgWidth > 0 && v.ImgHeight > 0 {
+		if err == nil && rt != "" && (v.ImgWidth >= 64 || v.ImgHeight >= 64) && v.BufBytes >= 1024 {
 
 			mgr.Insert(v.Url, rt, int(v.BufBytes), int(v.ImgWidth), int(v.ImgHeight))
 		}

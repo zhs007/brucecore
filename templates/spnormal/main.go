@@ -324,6 +324,7 @@ func GenMarkdown(name string, url string, reply *jarviscrawlercore.ReplyAnalyzeP
 	md.AppendParagraph("### 图片像素质量占比")
 	md.AppendParagraph("> 图片像素质量 = 图片字节大小 / (图片宽度 * 图片高度) 。\n我们根据图片像素质量来粗略的评估图片压缩率，那么质量占比大的图片，理应被优先压缩。")
 	md.AppendParagraph("> 这里的占比是平均值，如果有10张1024x1024的图片，在图片大小占比里的比例是用10张图片的平均像素质量来计算的。\n所以如果某种大小的图片占比较大，说明该规格下至少有一张图片值得注意。")
+	md.AppendParagraph("> 这里剔除了 小于1K、或 小于64X64 的图片。")
 
 	_, err = md.AppendChartTreeMapFloat(&adacore.ChartTreeMapFloat{
 		ID:          "pstreemap",
