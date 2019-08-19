@@ -10,4 +10,9 @@ var (
 
 	// ErrNoTemplate - no template
 	ErrNoTemplate = errors.New("no template")
+
+	// ErrNoIPGeo - no ipgeo
+	ErrNoIPGeo = errors.New("no ipgeo")
+	// ErrInvalidIP - invalid ip
+	ErrInvalidIP = errors.New("invalid ip")
 )

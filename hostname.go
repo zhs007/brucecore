@@ -1,28 +1,41 @@
 package brucecore
 
 import (
+	"context"
+	"fmt"
 	"strings"
 
+	"github.com/zhs007/brucecore/ipgeo"
+	ipgeopb "github.com/zhs007/brucecore/ipgeo/proto"
 	jarviscrawlercore "github.com/zhs007/jccclient/proto"
 )
+
+// IPGeoInfo - ipgeo infomation
+type IPGeoInfo struct {
+	IPAddr string
+	IPGeo  *ipgeopb.IPGeo
+}
 
 // HostnameInfo - hostname infomation
 type HostnameInfo struct {
 	Hostname string
-	IPAddr   []string
+	IPs      []*IPGeoInfo
 }
 
 // Insert - insert a SourceInfo
-func (hi *HostnameInfo) Insert(ipaddr string) {
-	if len(hi.IPAddr) > 0 {
-		for _, cip := range hi.IPAddr {
-			if cip == ipaddr {
+func (hi *HostnameInfo) Insert(ipaddr string, ipg *ipgeopb.IPGeo) {
+	if len(hi.IPs) > 0 {
+		for _, cip := range hi.IPs {
+			if cip.IPAddr == ipaddr {
 				return
 			}
 		}
 	}
 
-	hi.IPAddr = append(hi.IPAddr, ipaddr)
+	hi.IPs = append(hi.IPs, &IPGeoInfo{
+		IPAddr: ipaddr,
+		IPGeo:  ipg,
+	})
 }
 
 // HostnameList - hostname infomation list
@@ -31,19 +44,24 @@ type HostnameList struct {
 }
 
 // Insert - insert a SourceInfo
-func (sl *HostnameList) Insert(hostname string, ipaddr []string) {
+func (sl *HostnameList) Insert(ctx context.Context, ipgeodb *ipgeo.DB, hostname string, ipaddr []string) {
 	v := sl.Find(hostname)
 	if v == nil {
 		sl.List = append(sl.List, &HostnameInfo{
 			Hostname: hostname,
-			IPAddr:   ipaddr,
 		})
 
-		return
+		v = sl.Find(hostname)
+		if v == nil {
+			return
+		}
 	}
 
 	for _, curip := range ipaddr {
-		v.Insert(curip)
+		ipg, err := ipgeodb.GetIPGeoEx(ctx, curip)
+		if err == nil && ipg != nil {
+			v.Insert(curip, ipg)
+		}
 	}
 }
 
@@ -63,9 +81,14 @@ func (sl *HostnameList) ToData() [][]string {
 	var lst [][]string
 
 	for _, v := range sl.List {
+		ips := []string{}
+		for _, ipv := range v.IPs {
+			ips = append(ips, fmt.Sprintf("%v %v.%v", ipv.IPAddr, ipv.IPGeo.Continent, ipv.IPGeo.Country))
+		}
+
 		lst = append(lst, []string{
 			v.Hostname,
-			strings.Join(v.IPAddr, ";"),
+			strings.Join(ips, ";"),
 		})
 	}
 
@@ -73,7 +96,9 @@ func (sl *HostnameList) ToData() [][]string {
 }
 
 // AnalyzeHostNameInfo - analyze hostname
-func AnalyzeHostNameInfo(reqs []*jarviscrawlercore.AnalyzeReqInfo) (*HostnameList, error) {
+func AnalyzeHostNameInfo(ctx context.Context, ipgeodb *ipgeo.DB,
+	reqs []*jarviscrawlercore.AnalyzeReqInfo) (*HostnameList, error) {
+
 	lst := &HostnameList{}
 
 	for _, v := range reqs {
@@ -82,8 +107,10 @@ func AnalyzeHostNameInfo(reqs []*jarviscrawlercore.AnalyzeReqInfo) (*HostnameLis
 			return nil, err
 		}
 
-		ips := strings.Split(v.Ipaddr, ";")
-		lst.Insert(cs, ips)
+		if cs != "" {
+			ips := strings.Split(v.Ipaddr, ";")
+			lst.Insert(ctx, ipgeodb, cs, ips)
+		}
 	}
 
 	return lst, nil

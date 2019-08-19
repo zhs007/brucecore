@@ -1,1 +1,1 @@
-protoc -I jarviscrawlercorepb/ jarviscrawlercorepb/result.proto --go_out=plugins=grpc:jarviscrawlercorepb
+protoc -I ipgeo/proto/ ipgeo/proto/ipgeo.proto --go_out=plugins=grpc:ipgeo/proto

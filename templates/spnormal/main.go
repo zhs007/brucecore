@@ -1,18 +1,20 @@
 package spnormal
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
 	"github.com/zhs007/adacore"
 	adacorepb "github.com/zhs007/adacore/proto"
 	"github.com/zhs007/brucecore"
+	"github.com/zhs007/brucecore/ipgeo"
 	jarviscrawlercore "github.com/zhs007/jccclient/proto"
 )
 
 // GenMarkdown - generate markdown
 func GenMarkdown(name string, url string, reply *jarviscrawlercore.ReplyAnalyzePage,
-	km *adacore.KeywordMappingList) (*adacorepb.MarkdownData, error) {
+	km *adacore.KeywordMappingList, ipgeodb *ipgeo.DB) (*adacorepb.MarkdownData, error) {
 
 	mddata := &adacorepb.MarkdownData{
 		TemplateName: "default",
@@ -43,7 +45,7 @@ func GenMarkdown(name string, url string, reply *jarviscrawlercore.ReplyAnalyzeP
 		return nil, err
 	}
 
-	hostname, err := brucecore.AnalyzeHostNameInfo(reply.Reqs)
+	hostname, err := brucecore.AnalyzeHostNameInfo(context.Background(), ipgeodb, reply.Reqs)
 	if err != nil {
 		return nil, err
 	}
