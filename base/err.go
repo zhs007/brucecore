@@ -18,4 +18,7 @@ var (
 
 	// ErrInvalidFilename - invalid filename
 	ErrInvalidFilename = errors.New("invalid filename")
+
+	// ErrInvalidImageRect - invalid image rect
+	ErrInvalidImageRect = errors.New("invalid image rect")
 )
