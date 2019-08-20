@@ -15,4 +15,7 @@ var (
 	ErrNoIPGeo = errors.New("no ipgeo")
 	// ErrInvalidIP - invalid ip
 	ErrInvalidIP = errors.New("invalid ip")
+
+	// ErrInvalidFilename - invalid filename
+	ErrInvalidFilename = errors.New("invalid filename")
 )

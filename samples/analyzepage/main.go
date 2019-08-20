@@ -5,14 +5,17 @@ import (
 	"fmt"
 
 	"github.com/zhs007/adacore"
+	"github.com/zhs007/brucecore/ipgeo"
 	brucetemplates "github.com/zhs007/brucecore/templates"
 	"github.com/zhs007/jccclient"
 	jarviscrawlercore "github.com/zhs007/jccclient/proto"
 )
 
-func analyzePage(url string, delay int, w int, h int) (*jarviscrawlercore.ReplyAnalyzePage, error) {
+func analyzePage(client *jccclient.Client, url string, delay int, w int, h int) (
+	*jarviscrawlercore.ReplyAnalyzePage, error) {
+
 	// client := jccclient.NewClient("127.0.0.1:7051", "wzDkh9h2fhfUVuS9jZ8uVbhV3vC5AWX3")
-	client := jccclient.NewClient("47.75.11.61:7051", "wzDkh9h2fhfUVuS9jZ8uVbhV3vC5AWX3")
+	// client := jccclient.NewClient("47.75.11.61:7051", "wzDkh9h2fhfUVuS9jZ8uVbhV3vC5AWX3")
 
 	reply, err := client.AnalyzePage(context.Background(),
 		url, &jccclient.Viewport{
@@ -42,7 +45,7 @@ func analyzePage(url string, delay int, w int, h int) (*jarviscrawlercore.ReplyA
 	return reply, nil
 }
 
-func requestAda(name string, url string, result *jarviscrawlercore.ReplyAnalyzePage) error {
+func requestAda(ipgeodb *ipgeo.DB, name string, url string, result *jarviscrawlercore.ReplyAnalyzePage) error {
 	client := adacore.NewClient("47.91.209.141:7201", "x7sSGGHgmKwUMoa5S4VZlr9bUF2lCCzF")
 
 	km, err := adacore.LoadKeywordMappingList("./keywordmapping.yaml")
@@ -52,7 +55,7 @@ func requestAda(name string, url string, result *jarviscrawlercore.ReplyAnalyzeP
 		return err
 	}
 
-	mddata, err := brucetemplates.GenMarkdown("spnormal", name, url, result, km)
+	mddata, err := brucetemplates.GenMarkdown("spnormal", name, url, result, km, ipgeodb)
 	if err != nil {
 		fmt.Printf("spnormal.GenMarkdown error %v", err)
 
@@ -88,7 +91,12 @@ func main() {
 	adacore.InitTemplates()
 	adacore.InitLogger(cfg)
 
-	reply, err := analyzePage(url, 10, 1280, 800)
+	// client := jccclient.NewClient("127.0.0.1:7051", "wzDkh9h2fhfUVuS9jZ8uVbhV3vC5AWX3")
+	client := jccclient.NewClient("47.75.11.61:7051", "wzDkh9h2fhfUVuS9jZ8uVbhV3vC5AWX3")
+
+	ipgeodb, err := ipgeo.NewDB("../../data", "", "leveldb", client)
+
+	reply, err := analyzePage(client, url, 10, 411, 823)
 	if err != nil {
 		fmt.Printf("analyzePage err %v", err)
 	}
@@ -96,7 +104,7 @@ func main() {
 	if reply != nil {
 		fmt.Printf("analyzePage ok!\n")
 
-		err = requestAda(name, url, reply)
+		err = requestAda(ipgeodb, name, url, reply)
 		if err != nil {
 			fmt.Printf("requestAda err %v", err)
 		}

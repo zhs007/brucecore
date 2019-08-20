@@ -3,6 +3,7 @@ module github.com/zhs007/brucecore
 go 1.12
 
 require (
+	github.com/chai2010/webp v1.1.0
 	github.com/golang/protobuf v1.3.2
 	github.com/zhs007/adacore v0.1.51
 	github.com/zhs007/ankadb v0.3.31
